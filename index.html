@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Workflow Guide for CS Students</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar h1 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .sidebar nav ul {
+            list-style: none;
+        }
+        
+        .sidebar nav ul li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar nav a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+        
+        .sidebar nav a:hover {
+            background: #34495e;
+        }
+        
+        .sidebar nav ul ul {
+            margin-left: 15px;
+            margin-top: 5px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .sidebar nav li:hover > ul,
+        .sidebar nav li.active > ul {
+            max-height: 500px;
+        }
+        
+        .sidebar nav ul ul a {
+            font-size: 0.9em;
+            color: #bdc3c7;
+        }
+        
+        .sidebar nav li.active > a {
+            background: #34495e;
+            border-left: 3px solid #3498db;
+        }
+        
+        /* custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #ecf0f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #95a5a6;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7f8c8d;
+        }
+        
+        .sidebar::-webkit-scrollbar-track {
+            background: #1a252f;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #34495e;
+        }
+        
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #415b76;
+        }
+        
+        /* firefox scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #95a5a6 #ecf0f1;
+        }
+        
+        .sidebar {
+            scrollbar-color: #34495e #1a252f;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 900px;
+        }
+        
+        .content h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .content h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+        
+        .content h3 {
+            color: #34495e;
+            margin-top: 30px;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+        
+        .content p {
+            margin-bottom: 15px;
+        }
+        
+        .content code {
+            background: #f8f8f8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: #e74c3c;
+        }
+        
+        .content pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .content pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .tip-box {
+            background: linear-gradient(to right, #fff9e6 0%, #fff4d1 100%);
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .warning-box {
+            background: linear-gradient(to right, #ffe6e6 0%, #ffd1d1 100%);
+            border-left: 4px solid #e62222;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 3px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tip-box::after {
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%) rotate(15deg);
+            width: 150px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        .warning-box::after {
+            position: absolute;
+            right: -50px;
+            top: 50%;
+            transform: translateY(-50%) rotate(15deg);
+            width: 200px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        .tip-box::after {
+            content: url('./media/bulb.svg');
+        }
+        
+        .warning-box::after {
+            content: url('./media/warning.svg');
+        }
+        
+        .tip-box strong {
+            color: #e67e22;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .warning-box strong {
+            color: #e62222;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .image-placeholder {
+            background: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            padding: 40px;
+            margin: 20px 0;
+            text-align: center;
+            color: #7f8c8d;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        
+        .header-meta {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 30px;
+        }
+        
+        footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+            border-top: 3px solid #3498db;
+        }
+        
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        footer a:hover {
+            color: #5dade2;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1>Git Guide</h1>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#intro">Introduction</a></li>
+                    <li><a href="#getting-started">Getting Started</a>
+                        <ul>
+                            <li><a href="#installing">Installing Git</a></li>
+                            <li><a href="#config">Initial Configuration</a></li>
+                            <li><a href="#ssh">SSH Keys</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#daily-workflow">Daily Workflow</a>
+                        <ul>
+                            <li><a href="#cloning">Cloning Repositories</a></li>
+                            <li><a href="#add-commit-push">Add-Commit-Push</a></li>
+                            <li><a href="#status-history">Status & History</a></li>
+                            <li><a href="#pulling">Pulling Updates</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#branching">Branching</a>
+                        <ul>
+                            <li><a href="#understanding-branches">Understanding Branches</a></li>
+                            <li><a href="#creating-switching">Creating & Switching</a></li>
+                            <li><a href="#merging">Merging Branches</a></li>
+                            <li><a href="#deleting-branches">Deleting Branches</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#conflicts">Merge Conflicts</a>
+                        <ul>
+                            <li><a href="#understanding-conflicts">Understanding Conflicts</a></li>
+                            <li><a href="#recognizing-markers">Conflict Markers</a></li>
+                            <li><a href="#resolving-conflicts">Resolving Conflicts</a></li>
+                            <li><a href="#prevention">Prevention Strategies</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#collaboration">Collaboration</a>
+                        <ul>
+                            <li><a href="#group-workflow">Group Workflows</a></li>
+                            <li><a href="#pull-requests">Pull Requests</a></li>
+                            <li><a href="#pitfalls">Common Pitfalls</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#troubleshooting">Troubleshooting</a>
+                        <ul>
+                            <li><a href="#undoing">Undoing Changes</a></li>
+                            <li><a href="#gitignore">Using .gitignore</a></li>
+                            <li><a href="#errors">Common Errors</a></li>
+                            <li><a href="#recovery">Recovery Strategies</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#conclusion">Conclusion</a></li>
+                </ul>
+            </nav>
+            
+            <script>
+                // update active section based on scroll
+                const sections = document.querySelectorAll('section');
+                const navLinks = document.querySelectorAll('.sidebar nav a');
+                
+                function updateActiveNav() {
+                    let current = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        const sectionHeight = section.clientHeight;
+                        if (window.pageYOffset >= sectionTop - 100) {
+                            current = section.getAttribute('id');
+                        }
+                    });
+                    
+                    //  checks h2 subsections
+                    const subsections = document.querySelectorAll('h2[id]');
+                    subsections.forEach(subsection => {
+                        const sectionTop = subsection.offsetTop;
+                        if (window.pageYOffset >= sectionTop - 100) {
+                            current = subsection.getAttribute('id');
+                        }
+                    });
+                    
+                    navLinks.forEach(link => {
+                        const parent = link.parentElement;
+                        parent.classList.remove('active');
+                        
+                        if (link.getAttribute('href') === '#' + current) {
+                            parent.classList.add('active');
+                            // also marks parent section as active
+                            const parentLi = parent.closest('ul').closest('li');
+                            if (parentLi) {
+                                parentLi.classList.add('active');
+                            }
+                        }
+                    });
+                }
+                
+                window.addEventListener('scroll', updateActiveNav);
+                updateActiveNav();
+            </script>
+        </aside>
+        
+        <main class="content">
+            <section id="intro">
+                <h1>Git Workflow Guide for Computer Science Students</h1>
+                <div class="header-meta">A practical guide for academic projects | Version 1.0</div>
+                
+                <h2>What is Git?</h2>
+                <p>Git is a version control system that tracks changes to your code over time. Think of it like a sophisticated "undo" button combined with a collaborative workspace. Instead of having folders like <code>project_final</code>, <code>project_final_v2</code>, and <code>project_ACTUAL_final</code>, Git lets you save snapshots of your work (called commits) and navigate between them effortlessly.</p>
+                
+                <h2>Why Should You Care?</h2>
+                <p>As a CS student, you'll use Git for course assignments (many professors require Git for lab submissions), group projects (collaborate without emailing code files back and forth), personal projects (track your progress and experiment safely), and eventually in your career (nearly every software job expects Git proficiency).</p>
+                
+                <h2>What This Guide Covers</h2>
+                <p>This guide focuses on the Git workflows you'll actually use in your courses. You'll learn how to set up Git on your computer, use basic commands for daily work (clone, add, commit, push, pull), create branches for different features or labs, handle merge conflicts when working with teammates, and recover from common mistakes. This guide doesn't cover advanced topics like rebasing, cherry-picking, submodules, or complex branching strategies—you won't need these for most undergraduate coursework.</p>
+                
+                <h2>How to Use This Guide</h2>
+                <p>If you're new to Git, read the Getting Started and Daily Workflow sections in order to build foundational knowledge. If you need something specific, use the sidebar navigation to jump to any section. If you're stuck on an error, check the Troubleshooting section for common solutions.</p>
+            </section>
+            
+            <section id="getting-started">
+                <h1>Getting Started</h1>
+                <p>Before you can use Git, you need to install it and configure some basic settings. This section will walk you through the setup process for Windows, Mac, and Linux.</p>
+                
+                <h2 id="installing">Installing Git</h2>
+                
+                <h3>Windows</h3>
+                <p>Download the Git installer from <code><a href="https://git-scm.com/download/win" target="_blank">git-scm.com/download/win</a></code> and run it. During installation, use these recommended settings: select your preferred editor (the default is fine, or choose VS Code if installed), choose "Git from the command line and also from 3rd-party software", select "Use bundled OpenSSH", and choose "Checkout Windows-style, commit Unix-style line endings". Use MinTTY as the terminal emulator.</p>
+                
+                <p>After installation completes, verify it worked by opening Command Prompt or PowerShell and typing:</p>
+                
+                <pre><code>git --version</code></pre>
+                
+                <p>You should see output like <code>git version 2.43.0</code> (the exact version number may differ).</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Git installation wizard on Windows showing version selection screen]
+                </div>
+                
+                <h3>Mac</h3>
+                <p>If you have Homebrew installed, open Terminal and run:</p>
+                
+                <pre><code>brew install git</code></pre>
+                
+                <p>Alternatively, download the installer from <code>git-scm.com/download/mac</code>, open the downloaded .dmg file, and follow the installation prompts.</p>
+                
+                <p>Verify the installation by opening Terminal and typing:</p>
+                
+                <pre><code>git --version</code></pre>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal on Mac showing git --version output]
+                </div>
+                
+                <h3>Linux</h3>
+                <p>Git is often pre-installed on Linux. Check by opening a terminal and running <code>git --version</code>. If it's not installed, use your distribution's package manager.</p>
+                
+                <p>For Ubuntu/Debian:</p>
+                <pre><code>sudo apt update
+sudo apt install git</code></pre>
+                
+                <p>For Fedora:</p>
+                <pre><code>sudo dnf install git</code></pre>
+                
+                <p>For Arch:</p>
+                <pre><code>sudo pacman -S git</code></pre>
+                
+                <h2 id="config">Initial Configuration</h2>
+                <p>Once Git is installed, you need to tell it who you are. This information will be attached to every commit you make. Open your terminal (Command Prompt, PowerShell, or Terminal) and run these two commands, replacing the example information with your own:</p>
+                
+                <pre><code>git config --global user.name "Your Name"
+git config --global user.email "your.email@uah.edu"</code></pre>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Use the same email address you'll use for GitHub or GitLab. This ensures your commits are properly linked to your account.
+                </div>
+                
+                <h3>Verify Your Configuration</h3>
+                <p>Check that your settings were saved correctly:</p>
+                
+                <pre><code>git config --global --list</code></pre>
+                
+                <p>You should see output that includes your name and email:</p>
+                
+                <pre><code>user.name=Your Name
+user.email=your.email@uah.edu</code></pre>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal output of git config --list command with user details]
+                </div>
+                
+                <h3>Optional: Set Your Default Editor</h3>
+                <p>Git sometimes needs to open a text editor (for commit messages or merge conflicts). By default, it uses Vim, which can be confusing for beginners. You can change this to a more familiar editor.</p>
+                
+                <p>For VS Code:</p>
+                <pre><code>git config --global core.editor "code --wait"</code></pre>
+                
+                <p>For Nano (simpler command-line editor):</p>
+                <pre><code>git config --global core.editor "nano"</code></pre>
+                
+                <p>For Notepad (Windows only):</p>
+                <pre><code>git config --global core.editor "notepad"</code></pre>
+                
+                <h3>Optional: Set Default Branch Name</h3>
+                <p>Modern Git uses <code>main</code> as the default branch name instead of <code>master</code>. Set this now to avoid confusion:</p>
+                
+                <pre><code>git config --global init.defaultBranch main</code></pre>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> Some older repositories still use <code>master</code> as the main branch. Always check which branch you're on when working with existing projects.
+                </div>
+                
+                <h2 id="ssh">Setting Up SSH Keys</h2>
+                <p>SSH keys allow you to connect to GitHub or GitLab without typing your password every time you push code. This is optional but highly recommended.</p>
+                
+                <h3>What is SSH?</h3>
+                <p>SSH (Secure Shell) is a protocol that lets you securely communicate with remote servers. Instead of using a password, you create a pair of keys: a private key that stays on your computer (never share this!) and a public key that you upload to GitHub or GitLab. When you try to push code, GitHub checks if your private key matches the public key on file.</p>
+                
+                <h3>Checking for Existing SSH Keys</h3>
+                <p>First, check if you already have SSH keys. On Mac or Linux, run:</p>
+                
+                <pre><code>ls -al ~/.ssh</code></pre>
+                
+                <p>On Windows (PowerShell), run:</p>
+                
+                <pre><code>dir $HOME\.ssh</code></pre>
+                
+                <p>Look for files named <code>id_rsa.pub</code>, <code>id_ed25519.pub</code>, or similar. If they exist, you can skip to "Adding Your SSH Key to GitHub/GitLab."</p>
+                
+                <h3>Generating a New SSH Key</h3>
+                <p>If you don't have SSH keys, generate them with this command (works on all operating systems):</p>
+                
+                <pre><code>ssh-keygen -t ed25519 -C "your.email@uah.edu"</code></pre>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> If your system doesn't support ed25519, use <code>ssh-keygen -t rsa -b 4096 -C "your.email@uah.edu"</code> instead.
+                </div>
+                
+                <p>You'll see prompts asking where to save the key. Press Enter to accept the default location. You'll then be asked to enter a passphrase. You can either enter a passphrase (recommended for security—you'll need to type this when using the key) or press Enter twice to skip the passphrase (less secure but more convenient).</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal showing ssh-keygen command execution with prompts]
+                </div>
+                
+                <h3>Adding Your SSH Key to the SSH Agent</h3>
+                <p>The SSH agent manages your keys so you don't have to enter your passphrase repeatedly.</p>
+                
+                <p>On Mac or Linux:</p>
+                <pre><code>eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519</code></pre>
+                
+                <p>On Windows (PowerShell):</p>
+                <pre><code>Get-Service ssh-agent | Set-Service -StartupType Automatic
+Start-Service ssh-agent
+ssh-add $HOME\.ssh\id_ed25519</code></pre>
+                
+                <h3>Adding Your SSH Key to GitHub/GitLab</h3>
+                <p>Now you need to upload your public key to your Git hosting platform.</p>
+                
+                <p><strong>Step 1: Copy your public key</strong></p>
+                
+                <p>On Mac:</p>
+                <pre><code>pbcopy < ~/.ssh/id_ed25519.pub</code></pre>
+                
+                <p>On Linux:</p>
+                <pre><code>cat ~/.ssh/id_ed25519.pub</code></pre>
+                <p>(Then manually select and copy the output)</p>
+                
+                <p>On Windows (PowerShell):</p>
+                <pre><code>Get-Content $HOME\.ssh\id_ed25519.pub | Set-Clipboard</code></pre>
+                
+                <p><strong>Step 2: Add to GitHub</strong></p>
+                
+                <p>Go to <code>github.com</code> and log in. Click your profile picture, then select Settings. In the left sidebar, click "SSH and GPG keys". Click "New SSH key", give it a title like "Personal Laptop", paste your key into the "Key" field, and click "Add SSH key".</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: GitHub SSH key settings page with "New SSH key" button highlighted]
+                </div>
+                
+                <p><strong>Step 3: Test the connection</strong></p>
+                
+                <pre><code>ssh -T git@github.com</code></pre>
+                
+                <p>You should see a message like:</p>
+                
+                <pre><code>Hi username! You've successfully authenticated, but GitHub does not provide shell access.</code></pre>
+                
+                <p>Success! You're now ready to use Git with SSH.</p>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> If you're using GitLab instead of GitHub, replace <code>git@github.com</code> with <code>git@gitlab.com</code> in the test command, and follow GitLab's interface for adding SSH keys (Settings → SSH Keys).
+                </div>
+            </section>
+            
+            <section id="daily-workflow">
+                <h1>Essential Daily Workflow</h1>
+                <p>Now that Git is set up, let's learn the commands you'll use most often. This section covers the basic workflow you'll follow for nearly every assignment and project.</p>
+                
+                <h2 id="cloning">Cloning Repositories</h2>
+                <p>When your professor shares a starter repository or you want to work on an existing project, you'll need to clone it to your computer. Cloning creates a local copy of the entire repository, including all its history.</p>
+                
+                <h3>Getting the Repository URL</h3>
+                <p>On GitHub or GitLab, navigate to the repository page. Look for a green "Code" button (or similar). Click it and you'll see options for HTTPS and SSH URLs. If you set up SSH keys earlier, copy the SSH URL (it starts with <code>git@github.com:</code>). Otherwise, copy the HTTPS URL.</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: GitHub repository page showing the "Code" button dropdown with SSH and HTTPS options]
+                </div>
+                
+                <h3>Cloning the Repository</h3>
+                <p>Open your terminal and navigate to where you want to store the project. For example, if you keep your CS projects in a folder called <code>CS413</code>, navigate there first:</p>
+                
+                <pre><code>cd ~/CS413</code></pre>
+                
+                <p>Then clone the repository:</p>
+                
+                <pre><code>git clone git@github.com:professor/lab3-starter.git</code></pre>
+                
+                <p>Git will create a new folder with the repository name and download all the files. Navigate into that folder:</p>
+                
+                <pre><code>cd lab3-starter</code></pre>
+                
+                <p>You're now inside your local copy of the repository and ready to work.</p>
+                
+                <h2 id="add-commit-push">The Add-Commit-Push Cycle</h2>
+                <p>This is the fundamental workflow you'll use constantly. It consists of three steps: staging your changes, committing them with a message, and pushing them to the remote repository.</p>
+                
+                <h3>Understanding the Three Stages</h3>
+                <p>Git has three main states for your files. The working directory is where you edit files normally. The staging area (also called the index) holds changes you've marked to include in your next commit. The repository is the committed history of your project. When you make changes to files, they start in the working directory. You add them to the staging area, then commit them to the repository.</p>
+                
+                <h3>Making Changes</h3>
+                <p>Let's say you're working on a lab assignment. You edit some files, add new ones, maybe delete something. Git is tracking all of this, but it won't save anything until you tell it to.</p>
+                
+                <h3>Checking What Changed</h3>
+                <p>Before staging changes, it's good practice to see what you've modified:</p>
+                
+                <pre><code>git status</code></pre>
+                
+                <p>This command shows you which files have been modified, which are staged, and which are untracked (new files Git doesn't know about yet). The output might look like this:</p>
+                
+                <pre><code>On branch main
+Changes not staged for commit:
+  modified:   main.c
+  modified:   utils.c
+
+Untracked files:
+  test.c</code></pre>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal showing git status output with modified and untracked files]
+                </div>
+                
+                <h3>Staging Changes</h3>
+                <p>To stage specific files, use:</p>
+                
+                <pre><code>git add main.c utils.c</code></pre>
+                
+                <p>To stage all modified and new files at once:</p>
+                
+                <pre><code>git add .</code></pre>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Be careful with <code>git add .</code> because it stages everything. Make sure you're not accidentally adding files you don't want in your repository, like compiled binaries or temporary files. We'll cover .gitignore later to handle this automatically.
+                </div>
+                
+                <h3>Committing Changes</h3>
+                <p>Once your changes are staged, commit them with a descriptive message:</p>
+                
+                <pre><code>git commit -m "Implement bubble sort function"</code></pre>
+                
+                <p>The message should briefly describe what you changed. Good commit messages are clear and specific. Instead of "fixed stuff" or "updated file", write something like "Fix off-by-one error in array bounds" or "Add input validation for user commands".</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> If you forget the <code>-m</code> flag, Git will open your default text editor for you to write a longer message. This is useful for commits that need more explanation.
+                </div>
+                
+                <h3>Pushing to Remote</h3>
+                <p>Your commit is now saved locally, but your professor or teammates can't see it yet. Push your changes to the remote repository:</p>
+                
+                <pre><code>git push</code></pre>
+                
+                <p>If this is your first push on a new branch, Git might ask you to set an upstream branch. Just follow the instructions it gives you, which will look something like:</p>
+                
+                <pre><code>git push --set-upstream origin main</code></pre>
+                
+                <p>After pushing, your changes are now on GitHub or GitLab where others can see them.</p>
+                
+                <h3>The Complete Workflow</h3>
+                <p>Here's what a typical work session looks like:</p>
+                
+                <pre><code># Make some changes to your files
+# Check what changed
+git status
+
+# Stage your changes
+git add .
+
+# Commit with a message
+git commit -m "Add LED blink functionality"
+
+# Push to remote
+git push</code></pre>
+                
+                <p>You'll repeat this cycle many times as you work on projects. It becomes second nature quickly.</p>
+                
+                <h2 id="status-history">Checking Status and History</h2>
+                
+                <h3>Viewing Commit History</h3>
+                <p>To see a list of recent commits:</p>
+                
+                <pre><code>git log</code></pre>
+                
+                <p>This shows commit hashes, authors, dates, and messages. For a more compact view:</p>
+                
+                <pre><code>git log --oneline</code></pre>
+                
+                <p>This displays each commit on a single line, making it easier to scan through history.</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal showing git log --oneline output with several commits]
+                </div>
+                
+                <h3>Viewing Specific Changes</h3>
+                <p>To see exactly what changed in your working directory:</p>
+                
+                <pre><code>git diff</code></pre>
+                
+                <p>This shows line-by-line differences for modified files. To see what's staged for commit:</p>
+                
+                <pre><code>git diff --staged</code></pre>
+                
+                <h2 id="pulling">Pulling Updates</h2>
+                <p>When working on a shared repository, other people might push changes while you're working. Before you start a new work session, pull the latest changes:</p>
+                
+                <pre><code>git pull</code></pre>
+                
+                <p>This fetches changes from the remote repository and merges them into your local branch. If there are no conflicts, Git handles this automatically. If someone modified the same lines you're working on, you might get a merge conflict (we'll cover this in detail later).</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Get in the habit of running <code>git pull</code> before starting work and before pushing your changes. This prevents many merge conflicts and keeps your local copy up to date.
+                </div>
+            </section>
+            
+            <section id="branching">
+                <h1>Branching for Coursework</h1>
+                <p>Branches let you work on different features or experiments without affecting your main code. Think of them as parallel universes for your project where you can try things out safely.</p>
+                
+                <h2 id="understanding-branches">Understanding Branches</h2>
+                <p>By default, repositories have a main branch (usually called <code>main</code> or <code>master</code>). This is typically where your stable, working code lives. When you want to add a feature, fix a bug, or experiment with something, you create a new branch. This creates a copy of your code where you can make changes without touching the main branch. Once you're happy with your changes, you merge the branch back into main.</p>
+                
+                <p>For coursework, branches are useful when you want to try different approaches to a problem, work on multiple labs simultaneously, or collaborate with teammates on different features.</p>
+                
+                <h2 id="creating-switching">Creating and Switching Branches</h2>
+                
+                <h3>Creating a New Branch</h3>
+                <p>To create a new branch:</p>
+                
+                <pre><code>git branch feature-login</code></pre>
+                
+                <p>This creates a branch called <code>feature-login</code> but doesn't switch to it yet.</p>
+                
+                <h3>Switching Branches</h3>
+                <p>To switch to your new branch:</p>
+                
+                <pre><code>git checkout feature-login</code></pre>
+                
+                <p>Now any commits you make will be on this branch, not on main.</p>
+                
+                <h3>Creating and Switching in One Command</h3>
+                <p>You can combine these steps:</p>
+                
+                <pre><code>git checkout -b feature-login</code></pre>
+                
+                <p>This creates the branch and switches to it immediately.</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Modern Git also supports <code>git switch</code> as a clearer alternative to checkout. Use <code>git switch feature-login</code> to switch branches or <code>git switch -c feature-login</code> to create and switch.
+                </div>
+                
+                <h3>Viewing All Branches</h3>
+                <p>To see all branches in your repository:</p>
+                
+                <pre><code>git branch</code></pre>
+                
+                <p>The current branch will be marked with an asterisk.</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Terminal showing git branch output with multiple branches, current one highlighted]
+                </div>
+                
+                <h2>Working on a Branch</h2>
+                <p>Once you're on a branch, your workflow is exactly the same as before. Make changes, stage them, commit them, and push them:</p>
+                
+                <pre><code>git add .
+git commit -m "Add login form validation"
+git push</code></pre>
+                
+                <p>If this is the first time pushing this branch, Git will tell you to set the upstream:</p>
+                
+                <pre><code>git push --set-upstream origin feature-login</code></pre>
+                
+                <h2 id="merging">Merging Branches</h2>
+                <p>When your work on a branch is complete and tested, you'll want to merge it back into your main branch.</p>
+                
+                <h3>Switching to Main</h3>
+                <p>First, switch back to the branch you want to merge into (usually main):</p>
+                
+                <pre><code>git checkout main</code></pre>
+                
+                <h3>Updating Main</h3>
+                <p>Make sure your main branch is up to date:</p>
+                
+                <pre><code>git pull</code></pre>
+                
+                <h3>Performing the Merge</h3>
+                <p>Now merge your feature branch:</p>
+                
+                <pre><code>git merge feature-login</code></pre>
+                
+                <p>If there are no conflicts, Git will automatically merge the changes and create a merge commit. If there are conflicts, we'll cover how to resolve them in the next section.</p>
+                
+                <h3>Pushing the Merged Code</h3>
+                <p>Push your updated main branch:</p>
+                
+                <pre><code>git push</code></pre>
+                
+                <h2 id="deleting-branches">Deleting Branches</h2>
+                <p>Once a branch is merged and you no longer need it, you can delete it to keep things tidy:</p>
+                
+                <pre><code>git branch -d feature-login</code></pre>
+                
+                <p>This only deletes the local branch. To delete the remote branch on GitHub:</p>
+                
+                <pre><code>git push origin --delete feature-login</code></pre>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> Git won't let you delete a branch with <code>-d</code> if it has unmerged changes. If you're absolutely sure you want to delete it anyway, use <code>-D</code> (capital D) instead. Be careful—this permanently deletes any uncommitted work on that branch.
+                </div>
+                
+                <h2>Common Branching Scenarios</h2>
+                
+                <h3>Scenario 1: Trying Different Approaches</h3>
+                <p>You're working on an algorithm assignment and want to try both recursive and iterative solutions. Create two branches from main, implement each approach, test them, and merge whichever works best.</p>
+                
+                <pre><code>git checkout -b recursive-approach
+# Implement recursive solution
+git add .
+git commit -m "Implement recursive solution"
+
+git checkout main
+git checkout -b iterative-approach
+# Implement iterative solution
+git add .
+git commit -m "Implement iterative solution"
+
+# After testing, merge the better one
+git checkout main
+git merge iterative-approach</code></pre>
+                
+                <h3>Scenario 2: Multiple Lab Assignments</h3>
+                <p>You have three labs due at different times. Create a branch for each lab so you can work on them independently and submit them when ready.</p>
+                
+                <pre><code>git checkout -b lab3
+# Work on lab 3
+git checkout main
+git checkout -b lab4
+# Work on lab 4</code></pre>
+            </section>
+            
+            <section id="conflicts">
+                <h1>Handling Merge Conflicts</h1>
+                <p>Merge conflicts happen when two people edit the same lines of code in different ways. They're a normal part of collaboration and nothing to be afraid of. This section will teach you how to recognize, resolve, and prevent them.</p>
+                
+                <h2 id="understanding-conflicts">Understanding Conflicts</h2>
+                <p>A merge conflict occurs when Git can't automatically combine changes from different branches or commits. This typically happens in two situations: when you and a teammate both modify the same line in a file, or when one person deletes a file that another person modified.</p>
+                
+                <p>Git is actually very smart about merging. If you edit line 10 of a file and your teammate edits line 50, Git merges both changes automatically. Conflicts only happen when the changes overlap in ways Git can't resolve on its own.</p>
+                
+                <h3>When Conflicts Occur</h3>
+                <p>You'll encounter conflicts when running commands like <code>git merge</code>, <code>git pull</code>, or <code>git rebase</code>. Git will stop the operation and tell you which files have conflicts. The output looks something like this:</p>
+                
+                <pre><code>Auto-merging main.c
+CONFLICT (content): Merge conflict in main.c
+Automatic merge failed; fix conflicts and then commit the result.</code></pre>
+                
+                <h2 id="recognizing-markers">Recognizing Conflict Markers</h2>
+                <p>When Git detects a conflict, it modifies the conflicting files to show you both versions. Open the file and you'll see special markers that look like this:</p>
+                
+                <pre><code>int calculate_sum(int a, int b) {
+<<<<<<< HEAD
+    return a + b + 10;  // Your version
+=======
+    return (a + b) * 2;  // Their version
+>>>>>>> feature-branch
+}</code></pre>
+                
+                <p>The section between <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> and <code>=======</code> is your current branch's version. The section between <code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> is the incoming change from the other branch. The branch name after the arrows tells you where each version came from.</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: Text editor showing a file with Git conflict markers highlighting the HEAD and incoming sections]
+                </div>
+                
+                <h2 id="resolving-conflicts">Resolving Conflicts Step-by-Step</h2>
+                
+                <h3>Step 1: Identify Conflicted Files</h3>
+                <p>Run <code>git status</code> to see which files have conflicts:</p>
+                
+                <pre><code>git status</code></pre>
+                
+                <p>Files with conflicts will be listed under "Unmerged paths" or marked with "both modified".</p>
+                
+                <h3>Step 2: Open and Edit the File</h3>
+                <p>Open each conflicted file in your text editor. You need to manually decide what the final code should look like. You have several options: keep your version, keep their version, keep both (if that makes sense), or write something entirely new that combines both ideas.</p>
+                
+                <p>Remove the conflict markers (<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>) and edit the code to what it should be. For example, you might resolve the conflict above to:</p>
+                
+                <pre><code>int calculate_sum(int a, int b) {
+    return (a + b + 10) * 2;  // Combined both changes
+}</code></pre>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Modern editors like VS Code have built-in conflict resolution tools that highlight conflicts and let you click "Accept Current", "Accept Incoming", or "Accept Both" buttons. This makes resolving conflicts much easier than manual editing.
+                </div>
+                
+                <h3>Step 3: Stage the Resolved Files</h3>
+                <p>After fixing all conflicts in a file, stage it:</p>
+                
+                <pre><code>git add main.c</code></pre>
+                
+                <p>This tells Git you've resolved the conflicts in that file.</p>
+                
+                <h3>Step 4: Complete the Merge</h3>
+                <p>Once all conflicted files are resolved and staged, complete the merge with a commit:</p>
+                
+                <pre><code>git commit</code></pre>
+                
+                <p>Git will open your editor with a pre-filled merge commit message. You can keep it as-is or add notes about how you resolved conflicts. Save and close the editor to finish.</p>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> Don't forget to test your code after resolving conflicts. Just because the merge is complete doesn't mean the code works correctly. Make sure you didn't accidentally break functionality while combining changes.
+                </div>
+                
+                <h2>Aborting a Merge</h2>
+                <p>If you start resolving conflicts and realize you made a mistake or want to start over, you can abort the merge:</p>
+                
+                <pre><code>git merge --abort</code></pre>
+                
+                <p>This returns everything to the state before you started the merge. You can also use this if you're not ready to deal with conflicts right now.</p>
+                
+                <h2 id="prevention">Prevention Strategies</h2>
+                <p>While you can't eliminate conflicts entirely, you can minimize them with good practices.</p>
+                
+                <h3>Pull Before You Push</h3>
+                <p>Always pull the latest changes before starting work and before pushing your own changes. This keeps your local copy up to date and catches conflicts early when they're easier to resolve.</p>
+                
+                <pre><code>git pull
+# Work on your changes
+git add .
+git commit -m "Your changes"
+git pull  # Pull again before pushing
+git push</code></pre>
+                
+                <h3>Communicate with Your Team</h3>
+                <p>Talk to your teammates about who's working on what. If you know someone is editing the same file, coordinate to avoid editing the same sections simultaneously.</p>
+                
+                <h3>Make Small, Frequent Commits</h3>
+                <p>Instead of making one giant commit with 500 lines changed, make smaller commits as you complete each piece of functionality. Smaller changes are easier to merge and conflicts are easier to resolve.</p>
+                
+                <h3>Use Branches Effectively</h3>
+                <p>Have each person work on their own branch for features or tasks. Merge branches one at a time into main. This isolates changes and makes it clearer where conflicts come from.</p>
+            </section>
+            
+            <section id="collaboration">
+                <h1>Collaboration Basics</h1>
+                <p>Git really shines when you're working with others. This section covers the workflows and tools you'll use for group projects in your courses.</p>
+                
+                <h2 id="group-workflow">Group Project Workflows</h2>
+                <p>When working on a team project, you need a strategy for how everyone will contribute code without stepping on each other's toes. Here's a straightforward workflow that works well for academic projects.</p>
+                
+                <h3>Setting Up the Repository</h3>
+                <p>One team member creates the repository on GitHub and adds everyone else as collaborators. On the repository page, go to Settings → Collaborators and teams → Add people. Enter your teammates' GitHub usernames to give them push access.</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: GitHub repository settings page showing the "Add people" dialog for collaborators]
+                </div>
+                
+                <h3>Everyone Clones the Repository</h3>
+                <p>Each team member clones the repository to their computer:</p>
+                
+                <pre><code>git clone git@github.com:team/project-name.git
+cd project-name</code></pre>
+                
+                <h3>Feature Branch Workflow</h3>
+                <p>Instead of everyone committing directly to main, each person creates a branch for their work. This keeps the main branch stable and makes it easier to review changes.</p>
+                
+                <pre><code># Create a branch for your feature
+git checkout -b add-user-authentication
+
+# Work on your feature
+# Make commits as you go
+git add .
+git commit -m "Add login form"
+
+# Push your branch to GitHub
+git push -u origin add-user-authentication</code></pre>
+                
+                <h3>Merging Work Together</h3>
+                <p>When your feature is complete, merge it into main. There are two approaches: merge locally or use pull requests.</p>
+                
+                <h4>Option 1: Merge Locally</h4>
+                <pre><code># Make sure your branch is up to date
+git checkout add-user-authentication
+git pull origin main
+
+# Switch to main and merge
+git checkout main
+git pull
+git merge add-user-authentication
+git push</code></pre>
+                
+                <h4>Option 2: Use Pull Requests (Recommended)</h4>
+                <p>Pull requests provide a way to review code before merging. After pushing your branch, go to GitHub and you'll see a prompt to create a pull request. This lets teammates review your changes, leave comments, and approve the merge.</p>
+                
+                <h2 id="pull-requests">Pull Requests</h2>
+                <p>Pull requests (PRs) are GitHub's way of saying "I'd like to merge my changes, can someone review them first?" They're not a Git feature but a GitHub/GitLab feature, and they're incredibly useful for team projects.</p>
+                
+                <h3>Creating a Pull Request</h3>
+                <p>After pushing a branch, visit your repository on GitHub. You'll see a yellow banner saying "Your branch is ahead" with a button to "Compare & pull request". Click it, write a description of your changes, and click "Create pull request".</p>
+                
+                <div class="image-placeholder">
+                    [Screenshot: GitHub pull request creation page with title, description fields, and "Create pull request" button]
+                </div>
+                
+                <h3>Reviewing Pull Requests</h3>
+                <p>When a teammate creates a PR, you can review it by clicking on the PR and examining the "Files changed" tab. You can leave comments on specific lines, ask questions, or request changes. Once you're satisfied, click "Approve" or "Merge pull request".</p>
+                
+                <h3>Benefits of Pull Requests</h3>
+                <p>PRs provide a clear record of what changed and why. They let you catch bugs before they reach main. They're also great for learning—seeing how teammates solve problems helps everyone improve. For academic projects, PRs also provide documentation of who contributed what, which can be useful when dividing credit.</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Some professors require pull requests for group projects to track individual contributions. Even if not required, they're a professional practice worth learning.
+                </div>
+                
+                <h2 id="pitfalls">Common Collaboration Pitfalls</h2>
+                
+                <h3>Pitfall 1: Not Pulling Before Starting Work</h3>
+                <p>You start coding without pulling the latest changes. Your teammate pushed updates an hour ago. Now you have conflicts that could have been avoided. Always run <code>git pull</code> before starting a work session.</p>
+                
+                <h3>Pitfall 2: Pushing Directly to Main</h3>
+                <p>Everyone commits directly to main. Suddenly main is broken and you're not sure whose commit caused it. Use branches and pull requests to keep main stable.</p>
+                
+                <h3>Pitfall 3: Giant Commits</h3>
+                <p>You work for three days and make one commit with 2000 lines changed across 20 files. Now teammates can't review it effectively and merge conflicts are nightmare to resolve. Make small, logical commits frequently.</p>
+                
+                <h3>Pitfall 4: Poor Communication</h3>
+                <p>Two people work on the same file without telling each other. Both make conflicting changes to critical functions. Coordinate with your team about who's working on what.</p>
+                
+                <h3>Pitfall 5: Ignoring Merge Conflicts</h3>
+                <p>Someone gets a merge conflict, panics, randomly deletes conflict markers without understanding what they're removing, and pushes broken code. Take time to understand conflicts and test after resolving them.</p>
+                
+                <h2>Tips for Successful Collaboration</h2>
+                <p>Establish a workflow at the start of your project and stick to it. Decide whether you'll use pull requests, how you'll handle code review, and how often you'll merge to main. Write clear commit messages that explain what changed and why—your teammates will thank you. Use descriptive branch names like <code>fix-login-bug</code> or <code>add-database-schema</code> instead of <code>my-branch</code> or <code>test</code>. Pull frequently, commit frequently, push regularly. The more often you synchronize with the team, the fewer conflicts you'll face.</p>
+            </section>
+            
+            <section id="troubleshooting">
+                <h1>Troubleshooting Common Issues</h1>
+                <p>Everyone makes mistakes with Git. This section covers common problems and how to fix them.</p>
+                
+                <h2 id="undoing">Undoing Changes</h2>
+                <p>Git provides several ways to undo work depending on what you're trying to fix.</p>
+                
+                <h3>Unstaging Files</h3>
+                <p>You accidentally staged files you didn't mean to commit. Remove them from staging without losing your changes:</p>
+                
+                <pre><code>git restore --staged filename.c</code></pre>
+                
+                <p>Or unstage everything:</p>
+                
+                <pre><code>git restore --staged .</code></pre>
+                
+                <p>The files remain modified in your working directory, they're just no longer staged for commit.</p>
+                
+                <h3>Discarding Local Changes</h3>
+                <p>You made changes to a file but want to throw them away and go back to the last committed version:</p>
+                
+                <pre><code>git restore filename.c</code></pre>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> This permanently deletes your uncommitted changes. Make sure you really want to throw away your work before running this command.
+                </div>
+                
+                <h3>Amending the Last Commit</h3>
+                <p>You just made a commit but forgot to include a file, or you want to fix the commit message:</p>
+                
+                <pre><code># Stage the forgotten file
+git add forgotten-file.c
+
+# Amend the previous commit
+git commit --amend</code></pre>
+                
+                <p>This opens your editor to modify the commit message. Save and close to update the commit. If you just want to keep the same message:</p>
+                
+                <pre><code>git commit --amend --no-edit</code></pre>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> Only amend commits that haven't been pushed yet. Amending a pushed commit changes its hash, which can cause problems for teammates who already pulled it.
+                </div>
+                
+                <h3>Reverting a Commit</h3>
+                <p>You pushed a commit that introduced a bug. Instead of rewriting history, create a new commit that undoes the changes:</p>
+                
+                <pre><code>git revert abc123</code></pre>
+                
+                <p>Replace <code>abc123</code> with the commit hash you want to undo (get it from <code>git log</code>). Git creates a new commit that reverses the changes from that commit. This is safe because it doesn't rewrite history—it just adds a new commit on top.</p>
+                
+                <h3>Resetting to a Previous Commit</h3>
+                <p>For more drastic situations, you can reset your branch to an earlier state. This is powerful but dangerous, so be careful.</p>
+                
+                <pre><code># Keep your changes as uncommitted
+git reset --soft abc123
+
+# Discard everything after this commit
+git reset --hard abc123</code></pre>
+                
+                <p>The <code>--soft</code> option keeps your changes in the staging area. The <code>--hard</code> option permanently deletes all changes after that commit.</p>
+                
+                <div class="warning-box">
+                    <strong>Warning:</strong> <code>git reset --hard</code> is extremely destructive. All uncommitted work is lost forever. Only use this when you're absolutely certain you want to throw away everything.
+                </div>
+                
+                <h2 id="gitignore">Using .gitignore</h2>
+                <p>Not everything belongs in your repository. Compiled binaries, temporary files, IDE configurations, and sensitive data should not be committed. The <code>.gitignore</code> file tells Git which files to ignore.</p>
+                
+                <h3>Creating a .gitignore File</h3>
+                <p>In your repository's root directory, create a file named <code>.gitignore</code>. List patterns for files you want Git to ignore, one per line:</p>
+                
+                <pre><code># Compiled binaries
+*.o
+*.exe
+a.out
+
+# Editor temporary files
+*.swp
+*~
+.DS_Store
+
+# Build directories
+build/
+bin/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Sensitive data
+config.local
+secrets.txt
+*.key</code></pre>
+                
+                <p>Lines starting with <code>#</code> are comments. Use <code>*</code> as a wildcard to match any characters. End a pattern with <code>/</code> to match only directories.</p>
+                
+                <h3>Ignoring Already-Tracked Files</h3>
+                <p>If you accidentally committed files before creating <code>.gitignore</code>, adding them to <code>.gitignore</code> won't remove them from the repository. You need to untrack them first:</p>
+                
+                <pre><code>git rm --cached filename.o
+git commit -m "Remove binary from repository"</code></pre>
+                
+                <p>The <code>--cached</code> flag removes the file from Git's tracking without deleting it from your computer.</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> GitHub maintains a collection of useful .gitignore templates for different programming languages and environments at github.com/github/gitignore. You can copy a template that matches your project.
+                </div>
+                
+                <h2 id="errors">Common Error Messages</h2>
+                
+                <h3>"fatal: not a git repository"</h3>
+                <p>You're trying to run Git commands outside a Git repository. Make sure you're in the correct directory. Run <code>git init</code> to create a new repository or <code>cd</code> into an existing one.</p>
+                
+                <h3>"error: Your local changes would be overwritten by merge"</h3>
+                <p>You have uncommitted changes that conflict with incoming updates. Either commit your changes first (<code>git add . && git commit -m "message"</code>) or stash them temporarily (<code>git stash</code>), then pull, then restore your changes (<code>git stash pop</code>).</p>
+                
+                <h3>"fatal: refusing to merge unrelated histories"</h3>
+                <p>You're trying to merge two repositories with no common ancestor. This usually happens when you initialize a repository locally and also create one on GitHub with a README. To force the merge:</p>
+                
+                <pre><code>git pull origin main --allow-unrelated-histories</code></pre>
+                
+                <h3>"Permission denied (publickey)"</h3>
+                <p>Git can't authenticate with GitHub. Check that your SSH keys are set up correctly. Run <code>ssh -T git@github.com</code> to test your connection. If it fails, revisit the SSH setup section.</p>
+                
+                <h3>"You are in 'detached HEAD' state"</h3>
+                <p>You checked out a specific commit instead of a branch. Any commits you make won't be on any branch. To get back to normal, switch to a branch:</p>
+                
+                <pre><code>git checkout main</code></pre>
+                
+                <p>If you made commits while detached and want to keep them, create a new branch:</p>
+                
+                <pre><code>git checkout -b rescue-branch</code></pre>
+                
+                <h2 id="recovery">Recovery Strategies</h2>
+                
+                <h3>I Deleted Something Important</h3>
+                <p>If you committed the file before deleting it, you can recover it. Find the commit where it last existed:</p>
+                
+                <pre><code>git log -- path/to/file</code></pre>
+                
+                <p>Then restore it from that commit:</p>
+                
+                <pre><code>git checkout abc123 -- path/to/file</code></pre>
+                
+                <h3>I Made a Mess and Just Want to Start Over</h3>
+                <p>Get back to a clean state matching the remote repository:</p>
+                
+                <pre><code>git fetch origin
+git reset --hard origin/main</code></pre>
+                
+                <p>This throws away all local changes and matches your branch to the remote. Only use this when you're sure you want to discard everything.</p>
+                
+                <h3>I Need Help</h3>
+                <p>When stuck, the <code>git status</code> command often suggests what to do next. Git's error messages are usually helpful if you read them carefully. For complex situations, search the error message online—chances are someone else had the same problem. GitHub's documentation and Stack Overflow are excellent resources for troubleshooting Git issues.</p>
+                
+                <div class="tip-box">
+                    <strong>Tip:</strong> Before trying risky commands like <code>reset --hard</code>, make a backup copy of your project folder. You can also create a temporary branch to preserve your current state: <code>git branch backup-just-in-case</code>.
+                </div>
+            </section>
+            
+            <section id="conclusion">
+                <h1>Conclusion</h1>
+                <p>You've learned the essential Git workflows for academic projects. You can now set up Git, manage your code with commits and branches, collaborate with teammates, handle merge conflicts, and recover from common mistakes.</p>
+                
+                <h2>Next Steps</h2>
+                <p>The best way to learn Git is by using it. Start applying these workflows to your coursework. Create a repository for your next lab assignment. Use branches to experiment with different approaches. Practice resolving merge conflicts in low-stakes situations so you're prepared when they matter.</p>
+                
+                <p>As you gain experience, you'll discover more advanced Git features. When you're ready to learn more, explore topics like rebasing, cherry-picking, Git hooks, and more sophisticated branching strategies. For now, mastering the basics in this guide will serve you well through your academic career and beyond.</p>
+                
+                <h2>Additional Resources</h2>
+                <p>The official Git documentation at git-scm.com provides comprehensive reference material. GitHub's guides at <a href="https://docs.github.com/en" target="_blank">docs.github.com/en</a> offer tutorials on collaboration features. For interactive learning, try Git branching exercises at <a href="https://learngitbranching.js.org" target="_blank">learngitbranching.js.org</a>. The Pro Git book (freely available at <a href="https://git-scm.com/book" target="_blank">git-scm.com/book</a>) covers Git in depth.</p>
+                
+                <p>Good luck with your projects, and remember—everyone struggles with Git at first. With practice, it becomes an indispensable tool in your development workflow.</p>
+            </section>
+        </main>
+    </div>
+    
+    <footer>
+        <p>Created by Beatrice Womack | <a href="https://github.com/kyubea" target="_blank">GitHub: @kyubea</a></p>
+    </footer>
+</body>
+</html>

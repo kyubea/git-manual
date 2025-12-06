@@ -252,6 +252,20 @@ body {
     font-style: italic;
 }
 
+/* screenshot styling */
+.content img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    margin: 20px 0;
+    border: 2px solid #bdc3c7;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: block;
+    background: #fff;
+    object-fit: contain;
+}
+
 /* metadata */
 .header-meta {
     color: #7f8c8d;

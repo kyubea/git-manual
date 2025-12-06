@@ -99,9 +99,8 @@
                 
                 <p>You should see output like <code>git version 2.43.0</code> (the exact version number may differ).</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Git installation wizard on Windows showing version selection screen]
-                </div>
+                <img src="media/screen1.png" 
+                alt="Git installation wizard on Windows showing version selection screen">
                 
                 <h3>Mac</h3>
                 <p>If you have Homebrew installed, open Terminal and run:</p>
@@ -113,10 +112,6 @@
                 <p>Verify the installation by opening Terminal and typing:</p>
                 
                 <pre><code>git --version</code></pre>
-                
-                <div class="image-placeholder">
-                    [Screenshot: Terminal on Mac showing git --version output]
-                </div>
                 
                 <h3>Linux</h3>
                 <p>Git is often pre-installed on Linux. Check by opening a terminal and running <code>git --version</code>. If it's not installed, use your distribution's package manager.</p>
@@ -151,9 +146,8 @@ git config --global user.email "your.email@uah.edu"</code></pre>
                 <pre><code>user.name=Your Name
 user.email=your.email@uah.edu</code></pre>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Terminal output of git config --list command with user details]
-                </div>
+                <img src="media/screen2.png" 
+                alt="Terminal output of git config --list command with user details">
                 
                 <h3>Optional: Set Your Default Editor</h3>
                 <p>Git sometimes needs to open a text editor (for commit messages or merge conflicts). By default, it uses Vim, which can be confusing for beginners. You can change this to a more familiar editor.</p>
@@ -204,9 +198,8 @@ user.email=your.email@uah.edu</code></pre>
                 
                 <p>You'll see prompts asking where to save the key. Press Enter to accept the default location. You'll then be asked to enter a passphrase. You can either enter a passphrase (recommended for security—you'll need to type this when using the key) or press Enter twice to skip the passphrase (less secure but more convenient).</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Terminal showing ssh-keygen command execution with prompts]
-                </div>
+                <img src="media/screen3.png" 
+                alt="Terminal showing ssh-keygen command execution with prompts">
                 
                 <h3>Adding Your SSH Key to the SSH Agent</h3>
                 <p>The SSH agent manages your keys so you don't have to enter your passphrase repeatedly.</p>
@@ -239,9 +232,8 @@ ssh-add $HOME\.ssh\id_ed25519</code></pre>
                 
                 <p>Go to <code>github.com</code> and log in. Click your profile picture, then select Settings. In the left sidebar, click "SSH and GPG keys". Click "New SSH key", give it a title like "Personal Laptop", paste your key into the "Key" field, and click "Add SSH key".</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: GitHub SSH key settings page with "New SSH key" button highlighted]
-                </div>
+                <img src="media/screen4.png" 
+                alt="GitHub SSH key settings page with 'New SSH key' button highlighted">
                 
                 <p><strong>Step 3: Test the connection</strong></p>
                 
@@ -268,9 +260,8 @@ ssh-add $HOME\.ssh\id_ed25519</code></pre>
                 <h3>Getting the Repository URL</h3>
                 <p>On GitHub or GitLab, navigate to the repository page. Look for a green "Code" button (or similar). Click it and you'll see options for HTTPS and SSH URLs. If you set up SSH keys earlier, copy the SSH URL (it starts with <code>git@github.com:</code>). Otherwise, copy the HTTPS URL.</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: GitHub repository page showing the "Code" button dropdown with SSH and HTTPS options]
-                </div>
+                <img src="media/screen5.png" 
+                alt="GitHub repository page showing the 'Code' button dropdown with SSH and HTTPS options">
                 
                 <h3>Cloning the Repository</h3>
                 <p>Open your terminal and navigate to where you want to store the project. For example, if you keep your CS projects in a folder called <code>CS413</code>, navigate there first:</p>
@@ -311,9 +302,8 @@ Changes not staged for commit:
 Untracked files:
   test.c</code></pre>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Terminal showing git status output with modified and untracked files]
-                </div>
+                <img src="media/screen6.png" 
+                alt="Terminal showing git status output with modified and untracked files">
                 
                 <h3>Staging Changes</h3>
                 <p>To stage specific files, use:</p>
@@ -381,9 +371,8 @@ git push</code></pre>
                 
                 <p>This displays each commit on a single line, making it easier to scan through history.</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Terminal showing git log --oneline output with several commits]
-                </div>
+                <img src="media/screen7.png" 
+                alt="Terminal showing git log --oneline output with several commits">
                 
                 <h3>Viewing Specific Changes</h3>
                 <p>To see exactly what changed in your working directory:</p>
@@ -448,10 +437,6 @@ git push</code></pre>
                 <pre><code>git branch</code></pre>
                 
                 <p>The current branch will be marked with an asterisk.</p>
-                
-                <div class="image-placeholder">
-                    [Screenshot: Terminal showing git branch output with multiple branches, current one highlighted]
-                </div>
                 
                 <h2>Working on a Branch</h2>
                 <p>Once you're on a branch, your workflow is exactly the same as before. Make changes, stage them, commit them, and push them:</p>
@@ -561,9 +546,8 @@ Automatic merge failed; fix conflicts and then commit the result.</code></pre>
                 
                 <p>The section between <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code> and <code>=======</code> is your current branch's version. The section between <code>=======</code> and <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> is the incoming change from the other branch. The branch name after the arrows tells you where each version came from.</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: Text editor showing a file with Git conflict markers highlighting the HEAD and incoming sections]
-                </div>
+                <img src="media/screen8.png" 
+                alt="Text editor showing a file with Git conflict markers highlighting the HEAD and incoming sections">
                 
                 <h2 id="resolving-conflicts">Resolving Conflicts Step-by-Step</h2>
                 
@@ -645,9 +629,8 @@ git push</code></pre>
                 <h3>Setting Up the Repository</h3>
                 <p>One team member creates the repository on GitHub and adds everyone else as collaborators. On the repository page, go to Settings → Collaborators and teams → Add people. Enter your teammates' GitHub usernames to give them push access.</p>
                 
-                <div class="image-placeholder">
-                    [Screenshot: GitHub repository settings page showing the "Add people" dialog for collaborators]
-                </div>
+                <img src="media/screen9.png" 
+                alt="GitHub repository settings page showing the 'Add people' dialog for collaborators">
                 
                 <h3>Everyone Clones the Repository</h3>
                 <p>Each team member clones the repository to their computer:</p>
@@ -691,10 +674,6 @@ git push</code></pre>
                 
                 <h3>Creating a Pull Request</h3>
                 <p>After pushing a branch, visit your repository on GitHub. You'll see a yellow banner saying "Your branch is ahead" with a button to "Compare & pull request". Click it, write a description of your changes, and click "Create pull request".</p>
-                
-                <div class="image-placeholder">
-                    [Screenshot: GitHub pull request creation page with title, description fields, and "Create pull request" button]
-                </div>
                 
                 <h3>Reviewing Pull Requests</h3>
                 <p>When a teammate creates a PR, you can review it by clicking on the PR and examining the "Files changed" tab. You can leave comments on specific lines, ask questions, or request changes. Once you're satisfied, click "Approve" or "Merge pull request".</p>
